@@ -65,7 +65,7 @@ typedef prog_int16_t lookup_type;
 typedef  int16_t lookup_type;
 #endif
 
-#include "FractSupport.h"
+#include "Math/FractSupport.h"
 
 // for sin(x)
 //    If x > PI (i.e. X < 0), the negative flag is set, x is incremented by PI.

@@ -1,14 +1,14 @@
 #ifndef Shwatt_CalibrationRoutines_h
 #define Shwatt_CalibrationRoutines_h
 
-#include "ShwattGlobals.h"
+#include "Core/ShwattGlobals.h"
 
-#include "ShwattDAQ.h"
-#include "FractSupport.h"
-#include "Kalman.h"
+#include "DAQ/ShwattDAQ.h"
+#include "Math/FractSupport.h"
+#include "Algorithms/Kalman.h"
 #include <util/delay.h>
 #include <stdlib.h>
-#include "Clock.h"
+#include "DAQ/Clock.h"
 
 void DoCalibSequence(_Fract* yRateBias, _Fract* yRateNoise, 
                      _Fract* xAxisBias, _Fract* xAxisNoise, 

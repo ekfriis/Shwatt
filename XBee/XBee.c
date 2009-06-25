@@ -23,8 +23,7 @@
 */
 
 #include "XBee/XBee.h"
-#include "Parameters.h"
-#
+#include "Core/Parameters.h"
 
 // bitfield status flags
 #define XBeeRecieving ((1 << 0) & 0xFF)

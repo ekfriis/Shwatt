@@ -6,11 +6,11 @@
  *
  */
 
-#include "ShwattGlobals.h"
-#include "HardwareData.h"
+#include "Core/ShwattGlobals.h"
+#include "Core/HardwareData.h"
 #include <inttypes.h>
 #include <avr/interrupt.h>
-#include "FractSupport.h"
+#include "Math/FractSupport.h"
 
 extern void clockOverflowHandler(void);
 

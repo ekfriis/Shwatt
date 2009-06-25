@@ -4,7 +4,7 @@
 #include <avr/io.h>
 #include <inttypes.h>
 #include <avr/interrupt.h>
-#include "HardwareData.h"
+#include "Core/HardwareData.h"
 #include "Clock.h"
 
 #define AcquiringData   (1 << 3)

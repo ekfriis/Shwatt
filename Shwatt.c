@@ -2,13 +2,13 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
-#include "Calibrate.h"
-#include "ShmittTrigger.h"
-#include "Kalman.h"
+#include "Calibration/Calibrate.h"
+#include "DAQ/ShmittTrigger.h"
+#include "Algorithms/Kalman.h"
 #include "XBee/XBee.h"
-#include "FractSupport.h"
-#include "Clock.h"
-#include "ShwattGlobals.h"               // all shared state information
+#include "Math/FractSupport.h"
+#include "DAQ/Clock.h"
+#include "Core/ShwattGlobals.h"               // all shared state information
 
 volatile uint16_t rawXaxis;              // store location of interrrupts
 volatile uint16_t rawYrate;
@@ -108,6 +108,7 @@ void setup(void)
                    &measureBias[xAxisIndex], &measureNoise[xAxisIndex], 
                    &measureBias[zAxisIndex], &measureNoise[zAxisIndex], 
                    &gravity, &gyroGain);
+
    measureNoise[triggerPhiIndex]    = TrigPhiNoise;
    measureNoise[triggerPhiDotIndex] = TrigPhiDotNoise;
 

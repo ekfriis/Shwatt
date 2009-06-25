@@ -1,4 +1,3 @@
-
 #########  AVR Project Makefile Template   #########
 ######                                        ######
 ######    Copyright (C) 2003-2005,Pat Deegan, ######
@@ -21,168 +20,13 @@
 ######                                        ######
 ####################################################
 
+MCU            = atmega168
+PROGRAMMER_MCU = atmega168
+F_CPU          = 8000000
+AVRDUDE_PORT   = /dev/tty.usbserial-A900a50a
 
-##### This Makefile will make compiling Atmel AVR 
-##### micro controller projects simple with Linux 
-##### or other Unix workstations and the AVR-GCC 
-##### tools.
-#####
-##### It supports C, C++ and Assembly source files.
-#####
-##### Customize the values as indicated below and :
-##### make
-##### make disasm 
-##### make stats 
-##### make hex
-##### make writeflash
-##### make gdbinit
-##### or make clean
-#####
-##### See the http://electrons.psychogenic.com/ 
-##### website for detailed instructions
+# exectuables
 
-
-####################################################
-#####                                          #####
-#####              Configuration               #####
-#####                                          #####
-##### Customize the values in this section for #####
-##### your project. MCU, PROJECTNAME and       #####
-##### PRJSRC must be setup for all projects,   #####
-##### the remaining variables are only         #####
-##### relevant to those needing additional     #####
-##### include dirs or libraries and those      #####
-##### who wish to use the avrdude programmer   #####
-#####                                          #####
-##### See http://electrons.psychogenic.com/    #####
-##### for further details.                     #####
-#####                                          #####
-####################################################
-
-
-#####         Target Specific Details          #####
-#####     Customize these for your project     #####
-
-# Name of target controller 
-# (e.g. 'at90s8515', see the available avr-gcc mmcu 
-# options for possible values)
-MCU=atmega168
-#F_CPU = 16000000
-F_CPU = 8000000
-UPLOAD_RATE = 19200
-INSTALL_DIR = /Applications/Arduino
-
-# id to use with programmer
-# default: PROGRAMMER_MCU=$(MCU)
-# In case the programer used, e.g avrdude, doesn't
-# accept the same MCU name as avr-gcc (for example
-# for ATmega8s, avr-gcc expects 'atmega8' and 
-# avrdude requires 'm8')
-PROGRAMMER_MCU=atmega168
-
-# Name of our project
-# (use a single word, e.g. 'myproject')
-PROJECTNAME=shwatt
-
-# Source files
-# List C/C++/Assembly source files:
-# (list all files to compile, e.g. 'a.c b.cpp as.S'):
-# Use .cc, .cpp or .C suffix for C++ files, use .S 
-# (NOT .s !!!) for assembly source code files.
-#PRJSRC=main.c myclass.cpp lowlevelstuff.S
-#PRJSRC=Shwatt.c TrigLookup.c Kalman.c XBee/XBee.c XBee/XBeeHeadNode.c FractSupport.c ShwattDAQ.c wiring.c wiring_digital.c wiring_serial.c
-PRJSRC=Shwatt.c TrigLookup.c \
-       Kalman.c XBee/XBeeCommands.c \
-       XBee/XBee.c FractSupport.c \
-       ShwattDAQ.c Calibrate.c \
-       AbsFract.S \
-       ShmittTrigger.c \
-       Clock.c \
-       CalibrateAverageVariance.c \
-       ShwattGlobals.c  
-
-# additional includes (e.g. -I/path/to/mydir)
-#INC=-I/path/to/include
-INC=-I/path/to/include
-
-# libraries to link in (e.g. -lmylib)
-LIBS=
-
-# Optimization level, 
-# use s (size opt), 1, 2, 3 or 0 (off)
-#OPTLEVEL=2
-OPTLEVEL=s
-#OPTLEVEL=0
-
-
-#####      AVR Dude 'writeflash' options       #####
-#####  If you are using the avrdude program
-#####  (http://www.bsdhome.com/avrdude/) to write
-#####  to the MCU, you can set the following config
-#####  options and use 'make writeflash' to program
-#####  the device.
-
-
-# programmer id--check the avrdude for complete list
-# of available opts.  These should include stk500,
-# avr910, avrisp, bsd, pony and more.  Set this to
-# one of the valid "-c PROGRAMMER-ID" values 
-# described in the avrdude info page.
-# 
-AVRDUDE_PROGRAMMERID=stk500v1
-
-# port--serial or parallel port to which your 
-# hardware programmer is attached
-#
-#AVRDUDE_PORT=/dev/tty.usbserial-A7007cCc
-AVRDUDE_PORT=/dev/tty.usbserial-A900a50a 
-
-
-####################################################
-#####                Config Done               #####
-#####                                          #####
-##### You shouldn't need to edit anything      #####
-##### below to use the makefile but may wish   #####
-##### to override a few of the flags           #####
-##### nonetheless                              #####
-#####                                          #####
-####################################################
-
-
-##### Flags ####
-
-CDEFS = -DF_CPU=$(F_CPU)
-
-# HEXFORMAT -- format for .hex file output
-HEXFORMAT=ihex
-
-# compiler
-CFLAGS=-I. $(INC) -g -mmcu=$(MCU) -O$(OPTLEVEL) $(CDEFS) \
-	-fpack-struct -fshort-enums             \
-	-funsigned-bitfields -funsigned-char    \
-	-Wall -Wstrict-prototypes -std=gnu99    \
-	-Wa,-ahlms=$(firstword                  \
-	$(filter %.lst, $(<:.c=.lst)))
-
-# c++ specific flags
-CPPFLAGS=-fno-exceptions               \
-	-Wa,-ahlms=$(firstword         \
-	$(filter %.lst, $(<:.cpp=.lst))\
-	$(filter %.lst, $(<:.cc=.lst)) \
-	$(filter %.lst, $(<:.C=.lst)))
-
-# assembler
-ASMFLAGS =-I. $(INC) -mmcu=$(MCU)        \
-	-x assembler-with-cpp            \
-	-Wa,-gstabs,-ahlms=$(firstword   \
-		$(<:.S=.lst) $(<.s=.lst))
-
-
-# linker
-LDFLAGS=-Wl,-Map,$(TRG).map -mmcu=$(MCU) \
-	-lm $(LIBS)
-
-##### executables ####
 CC=avr-gcc
 OBJCOPY=avr-objcopy
 OBJDUMP=avr-objdump
@@ -190,117 +34,139 @@ SIZE=avr-size
 AVRDUDE=avrdude
 REMOVE=rm -f
 
-##### automatic target names ####
-TRG=$(PROJECTNAME).out
-DUMPTRG=$(PROJECTNAME).s
+# linker
+LDFLAGS=-Llib -Wl,-Map,$(TRG).map -mmcu=$(MCU) -Llib -lm $(LIBS)  
 
-HEXROMTRG=$(PROJECTNAME).hex 
-HEXTRG=$(HEXROMTRG) $(PROJECTNAME).ee.hex
-GDBINITFILE=gdbinit-$(PROJECTNAME)
+# assembler
+ASMFLAGS =-I. $(INC) -mmcu=$(MCU)        \
+	-x assembler-with-cpp            \
+	-Wa,-gstabs,-ahlms=$(firstword   \
+		$(<:.S=.lst) $(<.s=.lst))
 
-# My unit tests
-CALIBTEST=CalibDaqTest.out
-CALIBTEST_HEXROMTRG=$(CALIBTEST).hex 
-CALIB_HEXTRG=$(CALIB_HEXROMTRG) $(CALIBTEST).ee.hex
-
-# Define all object files.
-
-# Start by splitting source files by type
-#  C++
-CPPFILES=$(filter %.cpp, $(PRJSRC))
-CCFILES=$(filter %.cc, $(PRJSRC))
-BIGCFILES=$(filter %.C, $(PRJSRC))
-#  C
-CFILES=$(filter %.c, $(PRJSRC))
-#  Assembly
-ASMFILES=$(filter %.S, $(PRJSRC))
-
-
-# List all object files we need to create
-OBJDEPS=$(CFILES:.c=.o)    \
-	$(CPPFILES:.cpp=.o)\
-	$(BIGCFILES:.C=.o) \
-	$(CCFILES:.cc=.o)  \
-	$(ASMFILES:.S=.o)
-
-# Define all lst files.
-LST=$(filter %.lst, $(OBJDEPS:.o=.lst))
-
-# All the possible generated assembly 
-# files (.s files)
-GENASMFILES=$(filter %.s, $(OBJDEPS:.o=.s)) 
-
+# compiler
+CFLAGS=-I. $(INC) -g -mmcu=$(MCU) -Os -DF_CPU=$(F_CPU) \
+	-fpack-struct -fshort-enums             \
+	-funsigned-bitfields -funsigned-char    \
+	-Wall -Wstrict-prototypes -std=gnu99    \
+	-Wa,-ahlms=$(firstword                  \
+	$(filter %.lst, $(<:.c=.lst)))
 
 .SUFFIXES : .c .cc .cpp .C .o .out .s .S \
 	.hex .ee.hex .h .hh .hpp
 
+all: bin/Shwatt.out
 
-.PHONY: writeflash clean stats gdbinit stats
+MYOBJECTS = Shwatt.o Globals.o ShmittTrigger.o 
 
-# all, disasm, stats, hex, writeflash/install, clean
-all: $(TRG) 
+MyLibs = lib/libMyMath.a lib/libCalibrate.a lib/libDAQ.a
 
-# Make targets:
-doit: clean all writeflash
+#####################################################################################################
+#####################   Build math libraries                                 ########################
+#####################################################################################################
+MATHSRC = Math/FastSqrt.c Math/FractSupport.c Math/TrigLookup.c 
+MATHOBJ = $(MATHSRC:.c=.o)
 
-disasm: $(DUMPTRG) stats
+lib/libMyMath.a: $(MATHOBJ) Math/AbsFract.o
+	avr-ar rcs $@ $(MATHOBJ) Math/AbsFract.o
 
-stats: $(TRG)
-	$(OBJDUMP) -h $(TRG)
-	$(SIZE) $(TRG) 
+Math/AbsFract.o: Math/AbsFract.S Math/fixdef.h Math/asmdef.h 
+	$(CC) $(ASMFLAGS) -c Math/AbsFract.S -o $@
 
-hex: $(HEXTRG)
+#dependencies
+Math/TrigLookup.o: Math/TrigLookup.h
+Math/FastSqrt.o: Math/TrigLookup.h
+Math/FractSupport.o: Math/FractSupport.h
 
+#####################################################################################################
+#####################   Build DAQ libraries                                  ########################
+#####################################################################################################
+DAQSRC = DAQ/Clock.c DAQ/ShwattDAQ.c DAQ/ShmittTrigger.c
+DAQOBJ = $(DAQSRC:.c=.o)
+lib/libDAQ.a: $(DAQOBJ) 
+	avr-ar rcs $@ $(DAQOBJ) 
 
-writeflash: hex
-	$(AVRDUDE) -V -F -C $(INSTALL_DIR)/hardware/tools/avr/etc/avrdude.conf -c $(AVRDUDE_PROGRAMMERID)   \
+$(DAQOBJ): DAQ/Clock.h DAQ/ShwattDAQ.h Core/ShwattGlobals.h Core/HardwareData.h Math/FractSupport.h
+
+#####################################################################################################
+#####################   Build XBee libraries                                  ########################
+#####################################################################################################
+XBEESRC = XBee/XBee.c XBee/XBeeCommands.c
+XBEEOBJ = $(XBEESRC:.c=.o)
+lib/libXBee.a: $(XBEEOBJ) 
+	avr-ar rcs $@ $(XBEEOBJ) 
+
+$(XBEEOBJ): Math/FractSupport.h Core/ShwattGlobals.h XBee/XBee.h Core/Parameters.h
+
+#####################################################################################################
+#####################   Calibration libraries                                ########################
+#####################################################################################################
+CALIBSRC = Calibration/Calibrate.c Calibration/CalibrateAverageVariance.c
+CALIBOBJ = $(CALIBSRC:.c=.o)
+lib/libCalib.a: $(CALIBOBJ)
+	avr-ar rcs $@ $(CALIBOBJ)
+
+$(CALIBOBJ): Calibration/Calibrate.h Core/ShwattGlobals.h \
+             Math/FractSupport.h DAQ/Clock.h Algorithms/Kalman.h \
+	     DAQ/ShwattDAQ.h Core/Parameters.h
+
+#####################################################################################################
+#####################   Algorithm   libraries                                ########################
+#####################################################################################################
+ALGOSRC = Algorithms/Kalman.c
+ALGOOBJ = $(ALGOSRC:.c=.o)
+lib/libAlgos.a: $(ALGOOBJ)
+	avr-ar rcs $@ $(ALGOOBJ)
+$(ALGOOBJ): Algorithms/Kalman.h Core/ShwattGlobals.h Core/HardwareData.h Math/TrigLookup.h
+
+#####################################################################################################
+#####################   Code entry point                                     ########################
+#####################################################################################################
+## Main objects ##
+Core/ShwattGlobals.o: Core/ShwattGlobals.h Core/HardwareData.h Core/Parameters.h
+Shwatt.o: Calibration/Calibrate.h \
+   	  DAQ/ShmittTrigger.h \
+	  Algorithms/Kalman.h \
+	  XBee/XBee.h \
+	  Math/FractSupport.h \
+	  DAQ/Clock.h \
+	  Core/ShwattGlobals.h
+
+all: bin/Shwatt.out
+
+#####################################################################################################
+#####################   Link everything into executable
+#####################################################################################################
+MYLIBS = lib/libCalib.a lib/libXBee.a lib/libDAQ.a lib/libMyMath.a lib/libAlgos.a
+LIBS = -lCalib -lXBee -lDAQ -lAlgos -lMyMath 
+MYOBJS = Core/ShwattGlobals.o Shwatt.o
+ALLDEPS = $(MYLIBS) $(MYOBJS)
+
+# link everything into executable
+bin/Shwatt.out: $(ALLDEPS)
+	$(CC) $(LDFLAGS) -o bin/Shwatt.out $(MYOBJS) $(LIBS)
+
+# format into hex for upload
+hex: bin/Shwatt.hex bin/Shwatt.ee.hex
+
+#####################################################################################################
+#####################   Program device                 
+#####################################################################################################
+AVRDUDE_PROGRAMMERID=stk500v1
+UPLOAD_RATE = 19200
+
+write: hex
+	$(AVRDUDE) -V -F -C /Applications/Arduino/hardware/tools/avr/etc/avrdude.conf -c $(AVRDUDE_PROGRAMMERID)   \
 	 -p $(PROGRAMMER_MCU) -P $(AVRDUDE_PORT) -e        \
-	 -U flash:w:$(HEXROMTRG) -b $(UPLOAD_RATE)
+	 -U flash:w:bin/Shwatt.hex -b $(UPLOAD_RATE)
 
-install: writeflash
-
-$(DUMPTRG): $(TRG) 
-	$(OBJDUMP) -S  $< > $@
-
-
-$(TRG): $(OBJDEPS) 
-	$(CC) $(LDFLAGS) -o $(TRG) $(OBJDEPS)
-
-
-#### Generating assembly ####
-# asm from C
-%.s: %.c
-	$(CC) -S $(CFLAGS) $< -o $@
-
-# asm from (hand coded) asm
-%.s: %.S
-	$(CC) -S $(ASMFLAGS) $< > $@
-
-
-# asm from C++
-.cpp.s .cc.s .C.s :
-	$(CC) -S $(CFLAGS) $(CPPFLAGS) $< -o $@
-
-
-
-#### Generating object files ####
-# object from C
-.c.o: Parameters.h
+#### Compile object from source
+.c.o:
 	$(CC) $(CFLAGS) -c $< -o $@
-
-
-# object from C++ (.cc, .cpp, .C files)
-.cc.o .cpp.o .C.o :
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
-
-# object from asm
-.S.o :
-	$(CC) $(ASMFLAGS) -c $< -o $@
-
 
 #### Generating hex files ####
 # hex files from elf
 #####  Generating a gdb initialisation file    #####
+HEXFORMAT=ihex
 .out.hex:
 	$(OBJCOPY) -j .text                    \
 		-j .data                       \
@@ -312,33 +178,15 @@ $(TRG): $(OBJDEPS)
 		-O $(HEXFORMAT) $< $@
 
 
-#####  Generating a gdb initialisation file    #####
-##### Use by launching simulavr and avr-gdb:   #####
-#####   avr-gdb -x gdbinit-myproject           #####
-gdbinit: $(GDBINITFILE)
+#####################################################################################################
+#####################   Clean up                      
+#####################################################################################################
 
-$(GDBINITFILE): $(TRG)
-	@echo "file $(TRG)" > $(GDBINITFILE)
-	
-	@echo "target remote localhost:1212" \
-		                >> $(GDBINITFILE)
-	
-	@echo "load"        >> $(GDBINITFILE) 
-	@echo "break main"  >> $(GDBINITFILE)
-	@echo "continue"    >> $(GDBINITFILE)
-	@echo
-	@echo "Use 'avr-gdb -x $(GDBINITFILE)'"
-
-
-#### Cleanup ####
 clean:
-	$(REMOVE) $(TRG) $(TRG).map $(DUMPTRG)
-	$(REMOVE) $(OBJDEPS)
-	$(REMOVE) $(LST) $(GDBINITFILE)
-	$(REMOVE) $(HEXTRG)
-#	$(REMOVE) $(GENASMFILES)
-	
-
-
-#####                    EOF                   #####
+	rm -rf **/*.o 
+	rm -rf **/*.lst 
+	rm -rf lib/*.a
+	rm -rf bin/*
+	rm -rf Shwatt.o
+	rm -rf Shwatt.lst
 

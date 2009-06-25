@@ -1,10 +1,10 @@
 #ifndef EK_Kalman_h
 #define EK_Kalman_h
 
-#include "ShwattGlobals.h"
+#include "Core/ShwattGlobals.h"
 
-#include "HardwareData.h"
-#include "TrigLookup.h"
+#include "Core/HardwareData.h"
+#include "Math/TrigLookup.h"
 #include <inttypes.h>
 #include <stdlib.h>
 

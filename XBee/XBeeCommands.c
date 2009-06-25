@@ -1,5 +1,5 @@
 #include "XBee/XBee.h"
-#include "ShwattGlobals.h"
+#include "Core/ShwattGlobals.h"
 #include <stdfix.h>
 #include <inttypes.h>
 
