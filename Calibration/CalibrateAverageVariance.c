@@ -1,6 +1,5 @@
 #include "Calibrate.h"
 
-#ifndef FakeConditions
 uint16_t varianceSquared(uint32_t* SumOfSquares, uint32_t* Sum, uint8_t nSamplesByTwo, uint8_t multiplier)
 {
    // s2 = ( n*Sum(y^2) - Sum(y)^2 )/n^2
@@ -64,4 +63,3 @@ void GetAveragesAndVariances(int16_t* yRateAverage, int16_t* yRateNoise,
    *xAxisNoise       = XaxisVarianceSquared;
    *zAxisNoise       = ZaxisVarianceSquared;
 }
-#endif

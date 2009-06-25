@@ -100,7 +100,8 @@ $(XBEEOBJ): Math/FractSupport.h Core/ShwattGlobals.h XBee/XBee.h Core/Parameters
 #####################################################################################################
 #####################   Calibration libraries                                ########################
 #####################################################################################################
-CALIBSRC = Calibration/Calibrate.c Calibration/CalibrateAverageVariance.c
+CALIBSRC = Calibration/Calibrate.c Calibration/CalibrateAverageVariance.c \
+	   Calibration/checkSideUp.c Calibration/FakeCalibrate.c
 CALIBOBJ = $(CALIBSRC:.c=.o)
 lib/libCalib.a: $(CALIBOBJ)
 	avr-ar rcs $@ $(CALIBOBJ)
@@ -158,6 +159,16 @@ write: hex
 	$(AVRDUDE) -V -F -C /Applications/Arduino/hardware/tools/avr/etc/avrdude.conf -c $(AVRDUDE_PROGRAMMERID)   \
 	 -p $(PROGRAMMER_MCU) -P $(AVRDUDE_PORT) -e        \
 	 -U flash:w:bin/Shwatt.hex -b $(UPLOAD_RATE)
+size: bin/Shwatt.out
+	avr-size bin/Shwatt.out
+
+stats: bin/Shwatt.out
+	$(OBJDUMP) -h bin/Shwatt.out
+
+asm: bin/Shwatt.out
+	rm -rf DisAsm.s
+	$(OBJDUMP) -d bin/Shwatt.out > DisAsm.s
+
 
 #### Compile object from source
 .c.o:
@@ -189,4 +200,5 @@ clean:
 	rm -rf bin/*
 	rm -rf Shwatt.o
 	rm -rf Shwatt.lst
+	rm -rf DisAsm.s
 

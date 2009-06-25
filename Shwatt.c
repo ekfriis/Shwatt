@@ -104,27 +104,20 @@ void setup(void)
                       | XBeeContains_MeasureNoise
                       | XBeeContains_MeasureBiases );
 
+#ifdef FakeConditions
+   DoFakeCalibSequence(&measureBias[yRateIndex], &measureNoise[yRateIndex],
+                       &measureBias[xAxisIndex], &measureNoise[xAxisIndex], 
+                       &measureBias[zAxisIndex], &measureNoise[zAxisIndex], 
+                       &gravity, &gyroGain);
+#else
    DoCalibSequence(&measureBias[yRateIndex], &measureNoise[yRateIndex],
                    &measureBias[xAxisIndex], &measureNoise[xAxisIndex], 
                    &measureBias[zAxisIndex], &measureNoise[zAxisIndex], 
                    &gravity, &gyroGain);
+#endif
 
    measureNoise[triggerPhiIndex]    = TrigPhiNoise;
    measureNoise[triggerPhiDotIndex] = TrigPhiDotNoise;
-
-   /*
-   measureBias[extPhiIndex]        = 0;
-   measureBias[extPhiDotIndex]     = 0;
-   measureBias[triggerPhiIndex]    = 0;
-   measureBias[triggerPhiDotIndex] = 0;
-   // measure noise for external will be provided by the external shwatt
-   //
-   measureBiasError[yRateIndex] = measureNoise[yRateIndex]; //this should depend on nSamples...
-   measureBiasError[xAxisIndex] = measureNoise[xAxisIndex]; //this should depend on nSamples...
-   measureBiasError[zAxisIndex] = measureNoise[zAxisIndex]; //this should depend on nSamples...
-   measureBiasError[extPhiIndex]    = 0.1;
-   measureBiasError[extPhiDotIndex] = 0.1;
-   */
 
    BroadcastData();
    
