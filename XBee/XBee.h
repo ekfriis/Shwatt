@@ -4,7 +4,7 @@
 #include <inttypes.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include "Math/FractSupport.h"
+#include <stdfix.h>
 
 #ifndef cbi
 #define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
