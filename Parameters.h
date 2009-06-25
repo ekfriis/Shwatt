@@ -59,7 +59,7 @@
 // * Shmitt Trigger
 // ==================================
 
-#define TriggerNoise            ( ( (FakeXaxisNoise) + (FakeZaxisNoise) ) << (3) )
+#define TriggerNoise            ( ( (FakeXaxisNoise) + (FakeZaxisNoise) ) >> 1 )
 #define TriggerScaleNoise 2                             //scale known measure noise for trigger
 #define IsMovingThreshold 0.2                           //percentage (of g) that must be satisfied of isMoving to return true
 #define TimesMovingMax 60                               //number of times above requirement has to fail to be marked is/isnot moving

@@ -19,8 +19,6 @@ _Fract accelSquared(uint8_t index)
 char isMoving()
 {
    _Fract totalAcc = absr(accelSquared(xAxisIndex) + (accelSquared(zAxisIndex) - gSquared));
-   //_Fract totalAcc = (accelSquared(xAxisIndex) + (accelSquared(zAxisIndex) - gSquared));
-   //totalAcc = totalAcc*totalAcc;
    _Fract threshold = IsMovingThreshold*gSquared;
 
    if (totalAcc < threshold)
@@ -43,44 +41,6 @@ char isMoving()
       return 0x1;
    }
 }
-
-
-/*
-char greaterThanNoise(uint8_t index, _Fract offset)
-{
-   if ( measures[index] > (measureBias[index] + (measureNoise[index] << TriggerScaleNoise) - offset) )
-      return 0x1;
-   return 0x0;
-}
-
-char lessThanNoise(uint8_t index, _Fract offset)
-{
-   if ( measures[index] < (measureBias[index] - (measureNoise[index] << TriggerScaleNoise) - offset) )
-      return 0x1;
-   return 0x0;
-}
-
-void checkMeasureFlipped(uint8_t index, _Fract offset)
-{
-   uint8_t stateBitLow = (1 << index);
-   if ( TriggerState & stateBitLow )
-   {
-      // check if is high enough to flip to the high state
-      if (greaterThanNoise(index, offset))
-      {
-         TriggerState &= ~(stateBitLow);
-      }
-   }
-   else  //we are in the high x state
-   {
-      // see if we are low enough to flip state
-      if (lessThanNoise(index, offset))
-      {
-         TriggerState |= stateBitLow;
-      }
-   }
-}
-*/
 
 #define greaterThanNoiseFlag (1 << 0)
 #define lessThanNoiseFlag    (1 << 1)
@@ -128,9 +88,8 @@ void checkMeasureFlipped(uint8_t index, _Fract offset)
 uint8_t outsideNoise(_Fract value, _Fract expectedBias)
 {
    _Fract offsetBiasCorrected = value - expectedBias;
-   //DEBUG
-   if( absr(offsetBiasCorrected) > bitsr(TriggerNoise) )
-   //if( absr(offsetBiasCorrected) > 0 )
+   //TODO fix this HACK
+   if( absr(offsetBiasCorrected) > rbits(TriggerNoise)*gravity )
    {
       if( offsetBiasCorrected > 0 )
       {
