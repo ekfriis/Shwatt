@@ -58,10 +58,10 @@ typedef _Accum time_type;
 extern state_type state[NumStateVars];              
 extern stateError_type stateErrors[NumStateVars][NumStateVars];
 
-extern volatile measure_type measures[NumMeasures];   // from DAQ and messages from other foot
-extern measure_type measureNoise[NumMeasures];        // R vector, determined from calibration
-extern measure_type measureBias[NumMeasures];         // this is actually part of the state vector
-extern measure_type measureBiasError[NumMeasures];    // actually diagonal elements of state covariance
+extern volatile measure_type measures[NumMeasures];             // from DAQ and messages from other foot
+extern volatile measure_type measureNoise[NumMeasures];         // R vector, determined from calibration
+extern measure_type measureBias[NumMeasures];                   // this is actually part of the state vector
+extern measure_type measureBiasError[NumMeasures];              // actually diagonal elements of state covariance
 
 //extern volatile _Fract timeSinceLastMeasure;    // time elapsed since last measurement - as recorded in DAQ
 extern time_type timeSinceLastMeasure;    // time elapsed since last measurement - as recorded in DAQ

@@ -86,6 +86,7 @@ void setup(void)
    SetupADC(&rawXaxis, &rawZaxis, &rawYrate);
    setupClock();
    BeginSerial(BaudRate);
+   EnableRemoteShwattInput();
 
    timeSinceLastMeasure = 0;
    KalmanState      = 0;

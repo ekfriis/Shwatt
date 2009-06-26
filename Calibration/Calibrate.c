@@ -1,8 +1,8 @@
 #include "Calibrate.h"
 
-void DoCalibSequence(_Fract* yRateBias, _Fract* yRateNoise, 
-                     _Fract* xAxisBias, _Fract* xAxisNoise, 
-                     _Fract* zAxisBias, _Fract* zAxisNoise,
+void DoCalibSequence(_Fract* yRateBias, volatile _Fract* yRateNoise, 
+                     _Fract* xAxisBias, volatile _Fract* xAxisNoise, 
+                     _Fract* zAxisBias, volatile _Fract* zAxisNoise,
                      _Fract* gravity,   _Accum* gyroGain)
 {
    // right side up

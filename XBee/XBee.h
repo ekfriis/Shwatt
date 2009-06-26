@@ -49,40 +49,16 @@
 
 
 void SetBroadcastData(uint8_t options);
-
 void BroadcastData(void);
 
-struct XBeeFrameInBuffer
-{
-   unsigned char rx_tail;
-   unsigned int  length;
-   unsigned char checksum;  //we keep this here so we can catch errors incase we overflow
-                            //the frame buffer
-};
-
-/// returns number of frames in buffer
-uint8_t XBeeFramesAvailable(void);
-/// when we are done reading it
-void TrashCurrentFrame(void);
-uint8_t FrameDataAvailable(void);
-/// returns current frame length
-uint16_t XBeeFrameLength(void);
-/// returns current frame checksum
-uint8_t XBeeFrameChecksum(void);
-/// read a byte from the XBee stream
-uint8_t ReadXBeeDataByte(void);
-/// read an int from the Xbee stream
-uint16_t ReadXBeeDataInt(void);
-
-extern void XbeeFrameHandler(uint8_t);
-
+void BeginSerial(long baud);
 void SerialWrite(unsigned char byte);
+void EnableRemoteShwattInput(void);;
 
 void XBeeWriteByte(unsigned char byte  , unsigned char* checkSum);
 void XBeeWriteBytes(unsigned int input , unsigned char* checkSum);
 void XBeeWriteFract(_Fract input       , unsigned char* checkSum);
 void XBeeWriteAccum(_Accum input       , unsigned char* checkSum);
 
-void BeginSerial(long baud);
 
 #endif

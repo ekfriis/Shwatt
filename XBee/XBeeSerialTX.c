@@ -15,9 +15,6 @@ void BeginSerial(long baud)
 	// enable rx and tx
 	sbi(UCSR0B, RXEN0);
 	sbi(UCSR0B, TXEN0);
-	
-	// enable interrupt on complete reception of a byte
-	sbi(UCSR0B, RXCIE0);
 #else
 	UBRRH = ((F_CPU / 16 + baud / 2) / baud - 1) >> 8;
 	UBRRL = ((F_CPU / 16 + baud / 2) / baud - 1);
@@ -25,9 +22,6 @@ void BeginSerial(long baud)
 	// enable rx and tx
 	sbi(UCSRB, RXEN);
 	sbi(UCSRB, TXEN);
-	
-	// enable interrupt on complete reception of a byte
-	sbi(UCSRB, RXCIE);
 #endif
 	
 	// defaults to 8-bit, no parity, 1 stop bit

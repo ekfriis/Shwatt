@@ -10,14 +10,14 @@
 #include <stdlib.h>
 #include "DAQ/Clock.h"
 
-void DoCalibSequence(_Fract* yRateBias, _Fract* yRateNoise, 
-                     _Fract* xAxisBias, _Fract* xAxisNoise, 
-                     _Fract* zAxisBias, _Fract* zAxisNoise,
+void DoCalibSequence(_Fract* yRateBias, volatile _Fract* yRateNoise, 
+                     _Fract* xAxisBias, volatile _Fract* xAxisNoise, 
+                     _Fract* zAxisBias, volatile _Fract* zAxisNoise,
                      _Fract* gravity,   _Accum* gyroGain);
 
-void DoFakeCalibSequence(_Fract* yRateBias, _Fract* yRateNoise, 
-                         _Fract* xAxisBias, _Fract* xAxisNoise, 
-                         _Fract* zAxisBias, _Fract* zAxisNoise,
+void DoFakeCalibSequence(_Fract* yRateBias, volatile _Fract* yRateNoise, 
+                         _Fract* xAxisBias, volatile _Fract* xAxisNoise, 
+                         _Fract* zAxisBias, volatile _Fract* zAxisNoise,
                          _Fract* gravity,   _Accum* gyroGain);
 
 void GetAveragesAndVariances(int16_t* yRateAverage, int16_t* yRateNoise, 

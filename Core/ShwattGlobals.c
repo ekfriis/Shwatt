@@ -11,7 +11,7 @@ state_type state[NumStateVars];
 stateError_type stateErrors[NumStateVars][NumStateVars] = {{0}};
 
 volatile measure_type measures[NumMeasures];   // from DAQ and messages from other foot
-measure_type measureNoise[NumMeasures];        // R vector, determined from calibration
+volatile measure_type measureNoise[NumMeasures];        // R vector, determined from calibration
 measure_type measureBias[NumMeasures];         // this is actually part of the state vector
 measure_type measureBiasError[NumMeasures];    // actually diagonal elements of state covariance
 
