@@ -48,14 +48,30 @@ void BroadcastData(void)
    length += ( BroadcastDataOptions & XBeeContains_MeasureNoise )  ? XBeeContains_MeasureNoiseLength  : 0;
    length += ( BroadcastDataOptions & XBeeContains_MeasureBiases ) ? XBeeContains_MeasureBiasesLength : 0;
    length += ( BroadcastDataOptions & XBeeContains_Performance )   ? XBeeContains_PerformanceLength   : 0;
-   length += ( BroadcastDataOptions & XBeeContains_HMatrix )       ? XBeeContains_HMatrix             : 0;
    length += ( BroadcastDataOptions & XBeeContains_ShwattStatus )  ? XBeeContains_ShwattStatusLength  : 0;
+   length += ( BroadcastDataOptions & XBeeContains_InterCom    )   ? XBeeContains_InterComLength      : 0;
 
    SerialWrite(START_FRAME);                    //start the frame
    XBeeWriteBytes(length, 0);                   //set the length (dont' need checksum yet)
    WriteBroadcastPrelude();
-   // Write the data header
+
+   // Write the extra data header
    XBeeWriteByte(BroadcastDataOptions, &checkSum);
+
+   if( BroadcastDataOptions & XBeeContains_InterCom ) 
+   {
+      XBeeWriteByte(0xDA, &checkSum);   //intercom flag          
+      uint8_t subChecksum = 0;          //the intercom has a sub checksum
+      XBeeWriteFract(measures[phiIndex],        &subChecksum); 
+      XBeeWriteFract(measures[phiDotIndex],     &subChecksum); 
+      XBeeWriteFract(measureNoise[phiIndex],    &subChecksum); 
+      XBeeWriteFract(measureNoise[phiDotIndex], &subChecksum); 
+      XBeeWriteFract(measures[xAxisIndex],      &subChecksum); 
+      XBeeWriteFract(measures[zAxisIndex],      &subChecksum); 
+      checkSum   += subChecksum;
+      subChecksum = 0xDA - subChecksum;         // when resumed (including checksum), result will be 0x69
+      XBeeWriteByte(subChecksum, &checkSum);
+   }
 
    if( BroadcastDataOptions & XBeeContains_State )
    {
@@ -67,15 +83,9 @@ void BroadcastData(void)
 
    if( BroadcastDataOptions & XBeeContains_StateErrors )
    {
-      /*
-      XBeeWriteFract(stateErrors[thetaIndex][thetaIndex], &checkSum);
-      XBeeWriteFract(stateErrors[phiIndex][phiIndex], &checkSum);
-      XBeeWriteFract(stateErrors[phiDotIndex][phiDotIndex], &checkSum);
-      */
       XBeeWriteAccum(stateErrors[thetaIndex][thetaIndex], &checkSum);
       XBeeWriteAccum(stateErrors[phiIndex][phiIndex], &checkSum);
       XBeeWriteAccum(stateErrors[phiDotIndex][phiDotIndex], &checkSum);
-
       XBeeWriteFract(crankError, &checkSum);
    }
 
@@ -117,15 +127,6 @@ void BroadcastData(void)
       XBeeWriteFract(measureBias[zAxisIndex], &checkSum);
       XBeeWriteFract(measureBias[yRateIndex], &checkSum);
    }
-
-   /*
-   if (BroadcastDataOptions & XBeeContains_HMatrix )
-   {
-      XBeeWriteFract(hMatrixDynamics[thetaIndex], &checkSum);
-      XBeeWriteFract(hMatrixDynamics[phiIndex], &checkSum);
-      XBeeWriteFract(hMatrixDynamics[phiDotIndex], &checkSum);
-   }
-   */
 
    checkSum = 0xFF - checkSum;
    XBeeWriteByte(checkSum, 0);

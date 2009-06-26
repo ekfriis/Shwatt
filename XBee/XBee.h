@@ -27,18 +27,17 @@
 #define XBeeContains_MeasureNoise       (1 << 4)
 #define XBeeContains_MeasureBiases      (1 << 5)
 #define XBeeContains_Performance        (1 << 6)
-#define XBeeContains_HMatrix            (1 << 7)
+#define XBeeContains_InterCom          (1 << 7) //inter-shwatt communication
 
 #define XBeeContains_StateLength                10
-//#define XBeeContains_StateErrorsLength          XBeeContains_StateLength
-// DEBUG? maybe permananent w/ new accum stateerrors
 #define XBeeContains_StateErrorsLength          14
 #define XBeeContains_MeasuresLength             10
 #define XBeeContains_MeasureNoiseLength         XBeeContains_MeasuresLength
 #define XBeeContains_MeasureBiasesLength        XBeeContains_MeasuresLength
-#define XBeeContains_HMatrixLength              XBeeContains_StateLength
 #define XBeeContains_ShwattStatusLength         3
 #define XBeeContains_PerformanceLength          10
+
+#define XBeeContains_InterComLength             14 // 1 start byte, 4*2 state (&err) fract bytes, 2*2 accel fract byes, 1 checksum
 
 // XBee stuff
 #define START_FRAME             0x7E

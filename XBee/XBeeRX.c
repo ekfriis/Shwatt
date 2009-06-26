@@ -118,17 +118,17 @@ SIGNAL(SIG_USART_RECV)
             // wait until the next frame
             XBeeStatusFlags &= ~(XBeeRecieving);
          }
-         checksum = 0;
          break;
       // bytes 5-15 are bunch of stupid address crap
-      // bytes 16 & 17 give a flag (0xABCD) to indicate the external data frame
+      // bytes 16 contains the broadcast data options
+      // byte 17 give a flag (0xDA) to indicate the external data frame
       case 17:
-         if( lastTwoBytes != 0xABCD )
+         if( (lastTwoBytes & 0x00FF) != 0xDA )  // double check flag is incorrect
          {
-            // if this isn't a XBee external data frame, we don't care 
+            // if this isn't a XBee ShwattCom data frame, we don't care 
             XBeeStatusFlags &= ~(XBeeRecieving);
          }
-         checksum += sumBytes(0xABCD);
+         checksum = 0;
          break;
       // byte 18 is first data byte -> MSB of ext phi
       case 19:                                  //LSB of external phi
@@ -162,7 +162,7 @@ SIGNAL(SIG_USART_RECV)
       case 31:
          //TODO: send TriggerState as well in MSB?
          checksum += ((lastTwoBytes >> 8) & 0x00FF);
-         if( checksum == 0x69 )  //woop woop checksum is OK
+         if( checksum == 0xDA )  //woop woop checksum is OK
          {
             KalmanState |= ExternalDataBit;
          } 

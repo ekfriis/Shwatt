@@ -122,7 +122,8 @@ void setup(void)
 
    BroadcastData();
    
-   SetBroadcastData(  XBeeContains_State 
+   SetBroadcastData(  XBeeContains_InterCom //interfoot communication
+                    | XBeeContains_State 
                     | XBeeContains_Performance 
                     | XBeeContains_ShwattStatus
                     | XBeeContains_Measures 

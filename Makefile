@@ -90,7 +90,7 @@ $(DAQOBJ): DAQ/Clock.h DAQ/ShwattDAQ.h Core/ShwattGlobals.h Core/HardwareData.h 
 #####################################################################################################
 #####################   Build XBee libraries                                  ########################
 #####################################################################################################
-XBEESRC = XBee/XBee.c XBee/XBeeCommands.c XBee/XBeeApiTx.c XBee/XBeeApiTxFixedPoint.c \
+XBEESRC = XBee/XBeeRX.c XBee/XBeeCommands.c XBee/XBeeApiTx.c XBee/XBeeApiTxFixedPoint.c \
 	  XBee/XBeeSerialTX.c
 XBEEOBJ = $(XBEESRC:.c=.o)
 lib/libXBee.a: $(XBEEOBJ) 
