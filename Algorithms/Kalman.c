@@ -1,14 +1,11 @@
 #include "Kalman.h"
 
 _Fract cachedMeasures[NumMeasures];             // measures are volatile
-//_Fract cachedTimeSinceLastMeasure;
 time_type cachedTimeSinceLastMeasure;
 
-//_Fract hMatrixDynamics[4];          // one dimensional, as we only consider one measurement at a time 
 _Accum hMatrixDynamics[4];          // one dimensional, as we only consider one measurement at a time 
 _Accum hMatrixCrank;                // only constant term is crank radius (1x1)
 //_Fract hMatrixBiases[4];          // biases are linear in the measurement terms, so this is the unit matrix
-//
 
 void initializeStateErrors(void)
 {
@@ -36,8 +33,6 @@ void KalmanUpdateDynamics(_Fract residual, const uint8_t measurementIndex)
    else
       StatusPins |= StatusPin1;
 
-   //_Fract kMatrix[NumStateVars];
-   //stateError_type kMatrix[NumStateVars];
    _Accum kMatrix[NumStateVars];
    // compute kalman gain matrix
    // since we are processing only 1 measurement at a time, this is 1 x n
@@ -50,19 +45,6 @@ void KalmanUpdateDynamics(_Fract residual, const uint8_t measurementIndex)
    // Note that the hMatrix term always contains the correct row - it is precomputed
    // for each difference measurement
    
-   /*
-   kMatrix[0]         = stateErrors[0][0]*hMatrixDynamics[0] +
-                        stateErrors[0][1]*hMatrixDynamics[1] +
-                        stateErrors[0][2]*hMatrixDynamics[2];
-
-   kMatrix[1]         = stateErrors[1][0]*hMatrixDynamics[0] +  
-                        stateErrors[1][1]*hMatrixDynamics[1] +
-                        stateErrors[1][2]*hMatrixDynamics[2];
-
-   kMatrix[2]         = stateErrors[2][0]*hMatrixDynamics[0] +
-                        stateErrors[2][1]*hMatrixDynamics[1] +
-                        stateErrors[2][2]*hMatrixDynamics[2];
-                        */
    kMatrix[0]  = stateErrors[0][0]*hMatrixDynamics[0];
    kMatrix[0] += stateErrors[0][1]*hMatrixDynamics[1];
    kMatrix[0] += stateErrors[0][2]*hMatrixDynamics[2];
@@ -78,12 +60,6 @@ void KalmanUpdateDynamics(_Fract residual, const uint8_t measurementIndex)
 
    // compute denominator terms
    // H1 P11 H1t
-   //_Fract dynamicsDenominator =       hMatrixDynamics[0]*kMatrix[0] +
-   /*
-   _Accum dynamicsDenominator =       hMatrixDynamics[0]*kMatrix[0] +
-                                      hMatrixDynamics[1]*kMatrix[1] +
-                                      hMatrixDynamics[2]*kMatrix[2];
-                                      */
    _Accum dynamicsDenominator  = hMatrixDynamics[0]*kMatrix[0];
    dynamicsDenominator        += hMatrixDynamics[1]*kMatrix[1];
    dynamicsDenominator        += hMatrixDynamics[2]*kMatrix[2];
@@ -93,7 +69,6 @@ void KalmanUpdateDynamics(_Fract residual, const uint8_t measurementIndex)
 
    if( KalmanState & CrankUpdateBit && DEBUG_DISABLE_CRANKUPDATE)
    {
-      //_Fract kMatrixCrank;
       _Accum kMatrixCrank;
       dynamicsDenominator += crankError*hMatrixCrank*hMatrixCrank;
 
@@ -105,7 +80,6 @@ void KalmanUpdateDynamics(_Fract residual, const uint8_t measurementIndex)
       // H2 P21 H1t
       dynamicsDenominator += hMatrixCrank*kMatrixCrank;
 
-      //_Fract h2_P22_plus_h1_P12_temp = kMatrixCrank;
       _Accum h2_P22_plus_h1_P12_temp = kMatrixCrank;
 
       kMatrixCrank = kMatrixCrank / dynamicsDenominator;
@@ -117,7 +91,6 @@ void KalmanUpdateDynamics(_Fract residual, const uint8_t measurementIndex)
       crankError = crankError - kMatrixCrank*h2_P22_plus_h1_P12_temp;
 
       // P12 = P12 - K2 H1 P11 - K2 H2 12  (TODO: add K2 H1 P11)
-      //_Fract tempProduct = kMatrixCrank*hMatrixCrank;
       _Accum tempProduct = kMatrixCrank*hMatrixCrank;
       crankDynamicsErr[0] = crankDynamicsErr[0] - tempProduct*crankDynamicsErr[0];
       crankDynamicsErr[1] = crankDynamicsErr[1] - tempProduct*crankDynamicsErr[1];
@@ -143,29 +116,13 @@ void KalmanUpdateDynamics(_Fract residual, const uint8_t measurementIndex)
    kMatrix[2]  = kMatrix[2]  / dynamicsDenominator;
 
    //update state
-   //TEST
    state[0] += (state_type)(kMatrix[0]*residual);
    state[1] += (state_type)(kMatrix[1]*residual);
    state[2] += (state_type)(kMatrix[2]*residual);
 
-   //DEBUG
-   /*
-   if( state[thetaIndex] > 0.15 )
-      state[thetaIndex] = 0.15;
-   else if( state[thetaIndex] < -0.15 )
-      state[thetaIndex] = -0.15;
-      */
-
-
    //update covariance
    //P = (I - KH)P
    //P11 = P11 - H1 K1 P11 - K1 H2 P12 (TODO: Add K1 H2 P12, maybe not as it shoudl be small)
-   //_Fract tempSum = hMatrixDynamics[0]*stateErrors[0][0]
-   /*
-   _Accum tempSum = hMatrixDynamics[0]*stateErrors[0][0]
-                 + hMatrixDynamics[1]*stateErrors[0][1]
-                 + hMatrixDynamics[2]*stateErrors[0][2];
-                 */
    _Accum tempSum;
    tempSum  = hMatrixDynamics[0]*stateErrors[0][0];
    tempSum += hMatrixDynamics[1]*stateErrors[0][1];
@@ -176,11 +133,6 @@ void KalmanUpdateDynamics(_Fract residual, const uint8_t measurementIndex)
    stateErrors[0][1]  =  stateErrors[0][1] - kMatrix[1]*tempSum;
    stateErrors[0][2]  =  stateErrors[0][2] - kMatrix[2]*tempSum;
     
-   /*
-   tempSum       = hMatrixDynamics[0]*stateErrors[1][0] 
-                 + hMatrixDynamics[1]*stateErrors[1][1]
-                 + hMatrixDynamics[2]*stateErrors[1][2];
-                 */
    tempSum  = hMatrixDynamics[0]*stateErrors[1][0];
    tempSum += hMatrixDynamics[1]*stateErrors[1][1];
    tempSum += hMatrixDynamics[2]*stateErrors[1][2];
@@ -189,11 +141,6 @@ void KalmanUpdateDynamics(_Fract residual, const uint8_t measurementIndex)
    stateErrors[1][1]  =  stateErrors[1][1] - kMatrix[1]*tempSum;
    stateErrors[1][2]  =  stateErrors[1][2] - kMatrix[2]*tempSum;
 
-   /*
-   tempSum       = hMatrixDynamics[0]*stateErrors[2][0] 
-                 + hMatrixDynamics[1]*stateErrors[2][1]
-                 + hMatrixDynamics[2]*stateErrors[2][2];
-                 */
    tempSum  = hMatrixDynamics[0]*stateErrors[2][0];
    tempSum += hMatrixDynamics[1]*stateErrors[2][1];
    tempSum += hMatrixDynamics[2]*stateErrors[2][2];
@@ -309,21 +256,11 @@ void KalmanPredictStateAndCovariance()
       measureBiasError[extPhiIndex]    += Q_ExtPhiBias;
       measureBiasError[extPhiDotIndex] += Q_ExtPhiDotBias;
    }
-
-   /*
-   if (stateErrors[thetaIndex][thetaIndex] < 0)
-      stateErrors[thetaIndex][thetaIndex] = 0.999;
-   if (stateErrors[phiIndex][phiIndex] < 0)
-      stateErrors[phiIndex][phiIndex] = 0.999;
-   if (stateErrors[phiDotIndex][phiDotIndex] < 0)
-      stateErrors[phiDotIndex][phiDotIndex] = 0.999;
-      */
-
 }
 
 void KalmanCache(void)
 {
-   phiDot            = state[phiDotIndex]; //convert to radians
+   phiDot            = state[phiDotIndex]; 
    phiDotSquared     = phiDot*phiDot;
    crankRadiusPhiDotSquared = crankLength*phiDotSquared;
 
@@ -337,41 +274,25 @@ void KalmanUpdateXaxis(void)
 {
    KalmanCache();
    // *** Compute terms for left, forward facing accelerometer ***
-   //_Fract estimateMeasureFromState       = measureBias[xAxisIndex] + crankRadiusPhiDotSquared * CosTheta_minus_Phi - gSinTheta;
-   //_Fract estimateMeasureFromState       = measureBias[xAxisIndex] - crankRadiusPhiDotSquared * CosTheta_minus_Phi - gSinTheta;
-   
    // version from test
    _Fract estimateMeasureFromState       = measureBias[xAxisIndex] - crankRadiusPhiDotSquared * SinTheta_minus_Phi - gSinTheta;
 
    _Fract residual                       = cachedMeasures[xAxisIndex] - estimateMeasureFromState;
 
    // compute linearized h matrix 
-   // note that g is defined as one, by defintion of units
 
    // theta term 
-   // -g Cos(LeftTilt) - crank phiDot^2 Sin(LeftTilt-phi)
-   //hMatrixDynamics[thetaIndex] = (gCosTheta + crankRadiusPhiDotSquared*SinTheta_minus_Phi)*(-1);
-   //hMatrixDynamics[thetaIndex] = crankRadiusPhiDotSquared*SinTheta_minus_Phi - gCosTheta ;
    hMatrixDynamics[thetaIndex] = -crankRadiusPhiDotSquared*CosTheta_minus_Phi - gCosTheta ;
 
-
    // phi term
-   // crank phiDot^2 Sin(LeftTilt-phi)
-   //hMatrixDynamics[phiIndex] = (crankRadiusPhiDotSquared*SinTheta_minus_Phi);
-   //hMatrixDynamics[phiIndex] = (crankRadiusPhiDotSquared*SinTheta_minus_Phi)*(-1);
    hMatrixDynamics[phiIndex] = crankRadiusPhiDotSquared*CosTheta_minus_Phi;
 
    // phi dot term
-   // 2 crank phiDot Cos(LeftTilt - phi)
-   //hMatrixDynamics[phiDotIndex] = 2*(crankLength*phiDot*CosTheta_minus_Phi);
-   //hMatrixDynamics[phiDotIndex] = (-2)*(crankLength*phiDot*CosTheta_minus_Phi);
    hMatrixDynamics[phiDotIndex] = (-2)*(crankLength*phiDot*SinTheta_minus_Phi);
 
    // crank radius term
    if (KalmanState & CrankUpdateBit)
    {
-      //hMatrixCrank = (-1)*phiDotSquared*CosTheta_minus_Phi;
-      //hMatrixCrank = phiDotSquared*CosTheta_minus_Phi;
       hMatrixCrank = -phiDotSquared*SinTheta_minus_Phi;
    }
 
@@ -382,36 +303,21 @@ void KalmanUpdateZaxis(void)
 {
    KalmanCache();
    // *** Compute terms for left, upward facing accelerometer ***
-   //_Fract estimateMeasureFromState = measureBias[zAxisIndex] - crankRadiusPhiDotSquared * SinTheta_minus_Phi - gCosTheta;
-   //_Fract estimateMeasureFromState = measureBias[zAxisIndex] + crankRadiusPhiDotSquared * SinTheta_minus_Phi - gCosTheta;
-     
-   // from test
    _Fract estimateMeasureFromState = measureBias[zAxisIndex] - crankRadiusPhiDotSquared * CosTheta_minus_Phi - gCosTheta;
    _Fract residual                 = cachedMeasures[zAxisIndex] - estimateMeasureFromState;
 
    // theta term 
-   // g Sin(LeftTilt) - crank * phiDot^2 * Cos(LT - Phi)
-   //hMatrixDynamics[thetaIndex] = gSinTheta - crankRadiusPhiDotSquared * CosTheta_minus_Phi;
-   //hMatrixDynamics[thetaIndex] = gSinTheta + crankRadiusPhiDotSquared * CosTheta_minus_Phi;
    hMatrixDynamics[thetaIndex] = gSinTheta + crankRadiusPhiDotSquared*SinTheta_minus_Phi;
 
    // phi term
-   // crank phiDot^2 Sin(Phi - RightTilt)
-   //hMatrixDynamics[phiIndex] = (crankRadiusPhiDotSquared*CosTheta_minus_Phi);
-   //hMatrixDynamics[phiIndex] = (-crankRadiusPhiDotSquared*CosTheta_minus_Phi);
    hMatrixDynamics[phiIndex] = (-crankRadiusPhiDotSquared*SinTheta_minus_Phi);
 
    // phi dot term
-   // -2 crank phiDot Sin(LeftTilt - phi)
-   //hMatrixDynamics[phiDotIndex] = (-2)*(crankLength*phiDot*SinTheta_minus_Phi);
-   //hMatrixDynamics[phiDotIndex] = (2)*(crankLength*phiDot*SinTheta_minus_Phi);
    hMatrixDynamics[phiDotIndex] = (-2)*(crankLength*phiDot*CosTheta_minus_Phi);
 
    // crank radius term
    if (KalmanState & CrankUpdateBit)
    {
-      //hMatrixCrank = phiDotSquared*SinTheta_minus_Phi*(-1);
-      //hMatrixCrank = phiDotSquared*SinTheta_minus_Phi;
       hMatrixCrank = -phiDotSquared*CosTheta_minus_Phi;
    }
 
@@ -456,7 +362,7 @@ void KalmanUpdateTriggered(void)
 
    KalmanUpdateDynamics(residual, triggerPhiIndex);
 
-   // Do external phi dot measurement, if flagged
+   // Do external phi dot measurement, if flagged (this might not occur if we are oscillating about a trigger position)
    if ( TriggerState & TriggeredPhiDot )
    {
       estimateMeasureFromState = measureBias[triggerPhiDotIndex] + state[phiDotIndex];      //should always be the same
