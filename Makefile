@@ -170,6 +170,9 @@ asm: bin/Shwatt.out
 	rm -rf DisAsm.s
 	$(OBJDUMP) -d bin/Shwatt.out > DisAsm.s
 
+run: hex
+	open Monitor/Monitor.py -a /Applications/NodeBox/NodeBox.app
+
 
 #### Compile object from source
 .c.o:
