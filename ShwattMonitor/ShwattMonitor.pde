@@ -1,5 +1,9 @@
 import processing.serial.*;
+import processing.video.*;
 import java.util.*;
+
+MovieMaker mm;
+Capture camera;
 
 class State {
    int BroadcastData;
@@ -141,6 +145,7 @@ class InfoBox {
    {
       pushStyle();
       pushMatrix();
+      //scale(0.5);
       textFont(myFont);
       noStroke();
       fill(25);
@@ -481,12 +486,15 @@ class Pedal {
    }
 }
 
+// GLOBALS
+
 Pedal test = new Pedal();
 Accelerometers myAccel = new Accelerometers();
 Accelerometers expectedAccel = new Accelerometers();
 
 PFont droidSans48;
 PFont droidSans24;
+PFont droidSans12;
 
 State globalState = new State();
 State tempState = new State(); //serial state
@@ -500,14 +508,43 @@ void setup()
    tempState.gravity = 1;
    droidSans48 = loadFont("DroidSansMono-48.vlw");
    droidSans24 = loadFont("DroidSansMono-24.vlw");
-   size(1450, 850);
+   droidSans12 = loadFont("DroidSansMono-12.vlw");
+   //size(1450, 850);
+   size(725, 425);
+   //size(640, 480);
    infos = new InfoBox(tempState, width/2, height, droidSans24);
    //port = new Serial(this, Serial.list()[0], 19200);
    port = new Serial(this, Serial.list()[0], 57600);
-   myAccel.myFont = droidSans24;
-   expectedAccel.myFont = droidSans24;
+   myAccel.myFont = droidSans12;
+   expectedAccel.myFont = droidSans12;
+   // setup camera
+   println(Capture.list());
+   //camera = new Capture(this, width*7/16, height*7/16, 30);
+   camera = new Capture(this, width*7/16, width*32/100, 30);
+   /*
+   mm = new MovieMaker(this, width, height, "drawing.mov",
+         30, MovieMaker.H264, MovieMaker.HIGH);
+         */
+   mm = new MovieMaker(this, width, height, "drawing.mov",
+//         20, MovieMaker.ANIMATION, MovieMaker.HIGH);
+         20, MovieMaker.ANIMATION, MovieMaker.HIGH);
+   
+   //camera.settings();
+   //println(Capture.list());
+   frameRate(40);
    smooth();
 }
+
+void captureEvent(Capture myCapture) {
+  myCapture.read();
+}
+
+void keyPressed() {
+  if (key == ' ') {
+    mm.finish();  // Finish the movie if space bar is pressed!
+  }
+}
+
 
 void draw()
 {
@@ -520,34 +557,53 @@ void draw()
    background(0);
    stroke(255);
    fill(175);
+   textFont(droidSans12);
+
+   text(String.format("%1.0f fps", frameRate), 30, 30);
+   //scale(0.5);
+
+   /*
+   pushMatrix();
+   translate(width/2, height*0);
+   infos.draw();
+   popMatrix();
+   */
+
+   pushMatrix();
+   translate(width*7/16, height*1/16);
+   scale(-1.0, 1.0);
+   image(camera, -width*9/16, 0);
+   popMatrix();
 
    pushMatrix();
    translate(width/4, height/2);
-   scale(1.9);
-   test.drawTrigger();
+   //scale(1.9);
+   scale(1.1);
+   //test.drawTrigger();
    test.drawCrank();
    test.drawBottomBracket();
    test.drawPedal();
    popMatrix();
 
    pushMatrix();
-   translate(width*7/8, height*7/8);
-   myAccel.scaleFactor = 10;
+   translate(width*5/8, height*7/8);
+   textAlign(CENTER);
+   text("measured", 0, -height*1/8);
+   myAccel.scaleFactor = 7;
    myAccel.draw();
    popMatrix();
 
    pushMatrix();
-   translate(width*4/8, height*7/8);
-   expectedAccel.scaleFactor = 10;
+   translate(width*7/8, height*7/8);
+   textAlign(CENTER);
+   text("expected", 0, -height*1/8);
+   expectedAccel.scaleFactor = 7;
    expectedAccel.draw();
    popMatrix();
 
+   mm.addFrame();  // Add window's pixels to movie
 
 
-   pushMatrix();
-   translate(width/2, height*0);
-   infos.draw();
-   popMatrix();
 
    test.phi = intToFract(tempState.phi)*PI;
    test.triggerPhi = intToFract(tempState.trigPhi)*PI;
@@ -573,6 +629,7 @@ void draw()
    */
    expectedAccel.xAxis = -1*(floatCrankLength*floatPhiDot*floatPhiDot*sin(-floatPhi*PI))/floatGravity;
    expectedAccel.zAxis = (-floatGravity - floatCrankLength*floatPhiDot*floatPhiDot*cos(-floatPhi*PI))/floatGravity;
+
 
 
    //println(tempState.theta);
