@@ -8,12 +8,18 @@
 
 void XBeeWriteByte(unsigned char byte, unsigned char * checkSum)
 {
+   // add un-escaped byte to checksum, if desired
+   if (checkSum)
+      *checkSum += byte;
+
+   // escape control chars
    if (byte == START_FRAME || byte == XOFF || byte == XON || byte == ESCAPE_CHAR)
    {
       SerialWrite(ESCAPE_CHAR);
       byte ^= ESCAPE_XOR;
-   } else if (checkSum)
-      *checkSum += byte;
+   }    
+
+   // write the byte
    SerialWrite(byte);
 }
 

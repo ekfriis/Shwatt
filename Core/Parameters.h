@@ -94,10 +94,11 @@
 // * Communication parameters
 // ==================================
 //
-//#define BroadcastEveryNthDaqByTwo 2
-//#define BaudRate                 19200
-#define BaudRate                  57600
-#define BroadcastEveryNthDaqByTwo 1
+//#define BroadcastEveryNthDaqByTwo 6 // 2 HZ
+#define BroadcastEveryNthDaqByTwo 2 // 2 HZ
+#define BaudRate                 19200
+//#define BaudRate                  57600
+//#define BroadcastEveryNthDaqByTwo 1
 #define BroadcastEveryNthDaq      (1 << BroadcastEveryNthDaqByTwo)
 
 #define RX_BUFFER_SIZE          32

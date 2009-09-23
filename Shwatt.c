@@ -100,10 +100,12 @@ void setup(void)
 
    initializeStateErrors();
 
+   /*
    SetBroadcastData(    XBeeContains_ShwattStatus 
                       | XBeeContains_Measures 
                       | XBeeContains_MeasureNoise
                       | XBeeContains_MeasureBiases );
+                      */
 
 #ifdef FakeConditions
    DoFakeCalibSequence(&measureBias[yRateIndex], &measureNoise[yRateIndex],
@@ -122,6 +124,7 @@ void setup(void)
 
    BroadcastData();
    
+   /*
    SetBroadcastData(  XBeeContains_InterCom //interfoot communication
                     | XBeeContains_State 
                     | XBeeContains_Performance 
@@ -129,6 +132,9 @@ void setup(void)
                     | XBeeContains_Measures 
                     | XBeeContains_StateErrors 
                    );
+    */
+   SetBroadcastData(  XBeeContains_InterCom  );//interfoot communication
+
 
    KalmanState |= ReadyForData;
    //KalmanState |= CrankUpdateBit;

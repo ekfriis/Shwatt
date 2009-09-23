@@ -29,16 +29,6 @@
 #define XBeeContains_Performance        (1 << 6)
 #define XBeeContains_InterCom          (1 << 7) //inter-shwatt communication
 
-#define XBeeContains_StateLength                10
-#define XBeeContains_StateErrorsLength          14
-#define XBeeContains_MeasuresLength             10
-#define XBeeContains_MeasureNoiseLength         XBeeContains_MeasuresLength
-#define XBeeContains_MeasureBiasesLength        XBeeContains_MeasuresLength
-#define XBeeContains_ShwattStatusLength         3
-#define XBeeContains_PerformanceLength          10
-
-#define XBeeContains_InterComLength             14 // 1 start byte, 4*2 state (&err) fract bytes, 2*2 accel fract byes, 1 checksum
-
 // XBee stuff
 #define START_FRAME             0x7E
 #define XOFF                    0x13
@@ -58,6 +48,5 @@ void XBeeWriteByte(unsigned char byte  , unsigned char* checkSum);
 void XBeeWriteBytes(unsigned int input , unsigned char* checkSum);
 void XBeeWriteFract(_Fract input       , unsigned char* checkSum);
 void XBeeWriteAccum(_Accum input       , unsigned char* checkSum);
-
 
 #endif
